@@ -124,9 +124,60 @@ Lo que hagas hoy determina tu mañana
 Planificación diaria
 </div>
 
-<div class="placeholder">
-Acá irá la pantalla actual que ya construimos.
-</div>
+<label>
+Fecha
+<input type="date" id="fechaHoy" style="width:100%;padding:10px;margin-top:5px;">
+</label>
+
+<h3 style="margin-top:20px;">1. Compromisos fijos</h3>
+
+<div id="compromisos"></div>
+
+<label style="margin-top:10px;">
+Horas disponibles
+<input type="text" placeholder="Ej: 4 horas"
+style="width:100%;padding:10px;margin-top:5px;">
+</label>
+
+<h3 style="margin-top:25px;">2. Pendientes</h3>
+
+<div id="pendientes"></div>
+
+<h3 style="margin-top:25px;">3. Bloques de tiempo</h3>
+
+<div id="bloques"></div>
+
+<h3 style="margin-top:25px;">4. Cierre diario</h3>
+
+<label>
+<input type="checkbox">
+ Día completo
+</label>
+
+<h4 style="margin-top:20px;">
+¿Qué pasa para mañana?
+</h4>
+
+<div id="manana"></div>
+
+<label style="margin-top:20px;">
+Tarea más importante de mañana
+<input type="text"
+style="width:100%;padding:10px;margin-top:5px;">
+</label>
+
+<button
+style="
+margin-top:30px;
+padding:15px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+font-size:18px;
+">
+Guardar día
+</button>
 
 </div>
 
@@ -219,6 +270,170 @@ screen.classList.remove('active'));
 document
 .getElementById(id)
 .classList.add('active');
+
+}
+
+const fechaHoy = document.getElementById("fechaHoy");
+
+if(fechaHoy){
+fechaHoy.value =
+new Date().toISOString().split("T")[0];
+}
+
+function crearFilaCompromiso(){
+
+const input=document.createElement("input");
+
+input.type="text";
+input.placeholder="Compromiso";
+
+input.style.width="100%";
+input.style.padding="10px";
+input.style.marginBottom="8px";
+
+input.addEventListener("input",()=>{
+const container=document.getElementById("compromisos");
+
+const ultimo=container.lastElementChild;
+
+if(
+ultimo===input &&
+input.value.trim()!==""
+){
+crearFilaCompromiso();
+}
+});
+
+document
+.getElementById("compromisos")
+.appendChild(input);
+}
+
+function crearFilaPendiente(){
+
+const fila=document.createElement("div");
+
+fila.style.display="flex";
+fila.style.gap="10px";
+fila.style.marginBottom="8px";
+
+fila.innerHTML=`
+<input type="checkbox">
+<input type="text"
+placeholder="Pendiente"
+style="flex:1;padding:10px;">
+`;
+
+const texto=fila.querySelector("input[type='text']");
+
+texto.addEventListener("input",()=>{
+
+const container=
+document.getElementById("pendientes");
+
+if(
+container.lastElementChild===fila &&
+texto.value.trim()!==""
+){
+crearFilaPendiente();
+actualizarManana();
+}
+});
+
+document
+.getElementById("pendientes")
+.appendChild(fila);
+}
+
+function crearFilaBloque(){
+
+const fila=document.createElement("div");
+
+fila.style.display="grid";
+
+fila.style.gridTemplateColumns=
+"1fr 2fr";
+
+fila.style.gap="10px";
+
+fila.style.marginBottom="8px";
+
+fila.innerHTML=`
+<input type="text"
+placeholder="09:00-10:00">
+
+<input type="text"
+placeholder="Actividad">
+`;
+
+const actividad=
+fila.querySelectorAll("input")[1];
+
+actividad.addEventListener("input",()=>{
+
+const container=
+document.getElementById("bloques");
+
+if(
+container.lastElementChild===fila &&
+actividad.value.trim()!==""
+){
+crearFilaBloque();
+}
+});
+
+document
+.getElementById("bloques")
+.appendChild(fila);
+}
+
+function actualizarManana(){
+
+const manana=
+document.getElementById("manana");
+
+if(!manana) return;
+
+manana.innerHTML="";
+
+document
+.querySelectorAll("#pendientes input[type='text']")
+.forEach(input=>{
+
+if(input.value.trim()!==""){
+
+const fila=document.createElement("div");
+
+fila.style.marginBottom="8px";
+
+fila.innerHTML=`
+<label>
+<input type="checkbox">
+ ${input.value}
+</label>
+`;
+
+manana.appendChild(fila);
+
+}
+
+});
+
+}
+
+if(document.getElementById("compromisos")){
+
+crearFilaCompromiso();
+crearFilaCompromiso();
+crearFilaCompromiso();
+
+crearFilaPendiente();
+crearFilaPendiente();
+crearFilaPendiente();
+
+crearFilaBloque();
+crearFilaBloque();
+crearFilaBloque();
 
 }
 
