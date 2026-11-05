@@ -1,196 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planificación Diaria</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2563eb">
+<title>Plan Diario</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<style>
 
-    body {
-      margin: 0;
-      background: #f5f5f5;
-      padding: 16px;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-    }
+body{
+background:#f5f5f5;
+height:100vh;
+}
 
-    h1 {
-      margin-top: 0;
-    }
+.screen{
+display:none;
+height:100vh;
+padding:20px;
+}
 
-    h2 {
-      margin-top: 24px;
-    }
+.screen.active{
+display:flex;
+flex-direction:column;
+}
 
-    input[type="text"],
-    input[type="date"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
+.home{
+justify-content:center;
+align-items:center;
+text-align:center;
+}
 
-    .row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      align-items: center;
-    }
+.logo{
+font-size:42px;
+margin-bottom:20px;
+}
 
-    .row input[type="text"] {
-      flex: 1;
-    }
+.app-title{
+font-size:32px;
+font-weight:bold;
+margin-bottom:20px;
+}
 
-    .grid2 {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
+.start-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:18px 40px;
+font-size:22px;
+border-radius:15px;
+cursor:pointer;
+}
 
-    label {
-      display: block;
-      margin-bottom: 10px;
-    }
+.quote{
+margin-top:20px;
+color:#666;
+}
 
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #121212;
-      }
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:15px 0;
+box-shadow:0 -2px 10px rgba(0,0,0,.15);
+}
 
-      .container {
-        background: #1e1e1e;
-        color: white;
-      }
+.nav-btn{
+background:none;
+border:none;
+font-size:16px;
+cursor:pointer;
+}
 
-      input[type="text"],
-      input[type="date"] {
-        background: #2b2b2b;
-        color: white;
-        border-color: #555;
-      }
-    }
-  </style>
+.page-title{
+font-size:28px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+.placeholder{
+margin-top:30px;
+font-size:18px;
+color:#666;
+}
+
+</style>
 </head>
+
 <body>
 
-<div class="container">
+<div id="home" class="screen active home">
 
-  <h1>Planificación Diaria</h1>
+<div class="logo">🚀</div>
 
-  <label>
-    Fecha
-    <input id="fecha" type="date">
-  </label>
+<div class="app-title">
+PLAN DIARIO
+</div>
 
-  <h2>1. Compromisos Fijos</h2>
+<button class="start-btn"
+onclick="showScreen('today')">
+EMPEZÁ AHORA
+</button>
 
-  <div id="compromisos"></div>
+<div class="quote">
+Lo que hagas hoy determina tu mañana
+</div>
 
-  <label>
-    Horas reales disponibles
-    <input type="text" placeholder="Ej: 4 horas">
-  </label>
+</div>
 
-  <h2>2. Pendientes</h2>
+<div id="today" class="screen">
 
-  <div id="pendientes"></div>
+<div class="page-title">
+Planificación diaria
+</div>
 
-  <h2>3. Bloques de Tiempo</h2>
+<div class="placeholder">
+Acá irá la pantalla actual que ya construimos.
+</div>
 
-  <div id="bloques"></div>
+</div>
 
-  <h2>4. Cierre Diario</h2>
+<div id="stats" class="screen">
 
-  <label>
-    <input type="checkbox">
-    Día completo
-  </label>
+<div class="page-title">
+📊 Métricas
+</div>
 
-  <h3>¿Qué pasa para mañana?</h3>
+<div class="placeholder">
+Próximamente
+</div>
 
-  <div id="manana"></div>
+</div>
 
-  <label>
-    Tarea más importante de mañana
-    <input type="text">
-  </label>
+<div id="settings" class="screen">
+
+<div class="page-title">
+⚙️ Ajustes
+</div>
+
+<div class="placeholder">
+Próximamente
+</div>
+
+</div>
+
+<div class="bottom-nav">
+
+<button class="nav-btn"
+onclick="showScreen('stats')">
+📊
+</button>
+
+<button class="nav-btn"
+onclick="showScreen('today')">
+▶️
+</button>
+
+<button class="nav-btn"
+onclick="showScreen('settings')">
+⚙️
+</button>
 
 </div>
 
 <script>
-document.getElementById("fecha").value =
-  new Date().toISOString().split("T")[0];
 
-const compromisos = document.getElementById("compromisos");
+function showScreen(id){
 
-for(let i=0;i<6;i++){
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = "Compromiso fijo";
-  input.style.marginBottom = "8px";
-  compromisos.appendChild(input);
+document
+.querySelectorAll('.screen')
+.forEach(screen =>
+screen.classList.remove('active'));
+
+document
+.getElementById(id)
+.classList.add('active');
+
 }
 
-const pendientes = document.getElementById("pendientes");
-
-for(let i=0;i<12;i++){
-  const row = document.createElement("div");
-  row.className = "row";
-
-  row.innerHTML = `
-    <input type="checkbox">
-    <input type="text" placeholder="Pendiente">
-  `;
-
-  pendientes.appendChild(row);
-}
-
-const bloques = document.getElementById("bloques");
-
-for(let i=0;i<8;i++){
-  const row = document.createElement("div");
-  row.className = "grid2";
-
-  row.innerHTML = `
-    <input type="text" placeholder="Horario">
-    <input type="text" placeholder="Actividad">
-  `;
-
-  bloques.appendChild(row);
-}
-
-const manana = document.getElementById("manana");
-
-for(let i=0;i<5;i++){
-  const row = document.createElement("div");
-  row.className = "row";
-
-  row.innerHTML = `
-    <input type="checkbox">
-    <input type="text" placeholder="Actividad para mañana">
-  `;
-
-  manana.appendChild(row);
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
 </script>
 
 </body>
