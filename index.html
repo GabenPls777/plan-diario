@@ -349,52 +349,51 @@ document
 
 function controlarFilasCompromisos(){
 
-const container=
+const container =
 document.getElementById("compromisos");
 
-const inputs=
+const inputs =
 [...container.querySelectorAll("input")];
 
-const llenos=
-inputs.filter(x=>x.value.trim()!=="");
+const vacios =
+inputs.filter(x => x.value.trim()==="");
 
-container.innerHTML="";
+const llenos =
+inputs.filter(x => x.value.trim()!=="" );
 
-llenos.forEach(x=>{
+while(vacios.length > 1 && inputs.length > 3){
 
-const nuevo=document.createElement("input");
+const ultimoVacio =
+vacios.pop();
 
-nuevo.type="text";
-nuevo.value=x.value;
+ultimoVacio.remove();
 
-nuevo.placeholder="Compromiso";
+}
 
-nuevo.style.width="100%";
-nuevo.style.padding="10px";
-nuevo.style.marginBottom="8px";
+const restantes =
+container.querySelectorAll("input").length;
 
-nuevo.addEventListener("input",
-controlarFilasCompromisos);
+if(restantes < 3){
 
-container.appendChild(nuevo);
+for(let i=0;i<(3-restantes);i++){
 
-});
+agregarCompromiso();
 
-const vacio=
-document.createElement("input");
+}
 
-vacio.type="text";
+}
 
-vacio.placeholder="Compromiso";
+const ultimo =
+container.lastElementChild;
 
-vacio.style.width="100%";
-vacio.style.padding="10px";
-vacio.style.marginBottom="8px";
+if(
+ultimo &&
+ultimo.value.trim()!==""
+){
 
-vacio.addEventListener("input",
-controlarFilasCompromisos);
+agregarCompromiso();
 
-container.appendChild(vacio);
+}
 
 }
 
@@ -454,58 +453,57 @@ document
 
 function controlarPendientes(){
 
-const container=
+const container =
 document.getElementById("pendientes");
 
-const filas=
+const filas =
 [...container.querySelectorAll(".pendiente")];
 
-const tareas=
-filas
-.map(f=>({
-texto:f.querySelector(".textoPendiente").value,
-checked:f.querySelector(".hacerHoy").checked
-}))
-.filter(x=>x.texto.trim()!=="" );
+const vacias =
+filas.filter(f=>
+f.querySelector(".textoPendiente")
+.value.trim()===""
+);
 
-container.innerHTML="";
+while(
+vacias.length > 1 &&
+filas.length > 3
+){
 
-tareas.forEach(t=>{
+const fila =
+vacias.pop();
 
-const fila=document.createElement("div");
+fila.remove();
 
-fila.className="pendiente";
+}
 
-fila.style.display="flex";
-fila.style.gap="10px";
-fila.style.marginBottom="8px";
+const restantes =
+container.querySelectorAll(".pendiente").length;
 
-fila.innerHTML=`
-<input class="hacerHoy" type="checkbox"
-${t.checked ? "checked" : ""}>
-<input
-class="textoPendiente"
-type="text"
-value="${t.texto}"
-style="flex:1;padding:10px;">
-`;
+if(restantes < 3){
 
-fila
-.querySelector(".textoPendiente")
-.addEventListener("input",
-controlarPendientes);
-
-fila
-.querySelector(".hacerHoy")
-.addEventListener("change",()=>{
-actualizarBloques();
-});
-
-container.appendChild(fila);
-
-});
+for(let i=0;i<(3-restantes);i++){
 
 agregarPendiente();
+
+}
+
+}
+
+const ultimaFila =
+container.lastElementChild;
+
+const ultimoInput =
+ultimaFila?.querySelector(".textoPendiente");
+
+if(
+ultimoInput &&
+ultimoInput.value.trim()!==""
+){
+
+agregarPendiente();
+
+}
 
 actualizarManana();
 actualizarBloques();
