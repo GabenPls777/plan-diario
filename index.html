@@ -126,54 +126,72 @@ Planificación diaria
 
 <label>
 Fecha
-<input type="date" id="fechaHoy" style="width:100%;padding:10px;margin-top:5px;">
-</label>
-
-<h3 style="margin-top:20px;">1. Compromisos fijos</h3>
-
-<div id="compromisos"></div>
-
-<label style="margin-top:10px;">
-Horas disponibles
-<input type="text" placeholder="Ej: 4 horas"
+<input type="date" id="fechaHoy"
 style="width:100%;padding:10px;margin-top:5px;">
 </label>
 
-<h3 style="margin-top:25px;">2. Pendientes</h3>
+<h3 style="margin-top:25px;">
+1. Compromisos fijos
+</h3>
+
+<div id="compromisos"></div>
+
+<label style="margin-top:15px;">
+Horas disponibles
+<input
+type="text"
+placeholder="Ej: 4 horas"
+style="width:100%;padding:10px;margin-top:5px;">
+</label>
+
+<h3 style="margin-top:25px;">
+2. Pendientes
+</h3>
+
+<p style="color:#666;margin-bottom:10px;">
+Tildá los pendientes que te propones hacer hoy
+</p>
 
 <div id="pendientes"></div>
 
-<h3 style="margin-top:25px;">3. Bloques de tiempo</h3>
+<h3 style="margin-top:25px;">
+3. Bloques de tiempo
+</h3>
 
 <div id="bloques"></div>
 
-<h3 style="margin-top:25px;">4. Cierre diario</h3>
+<h3 style="margin-top:25px;">
+4. Cierre diario
+</h3>
 
 <label>
 <input type="checkbox">
  Día completo
 </label>
 
-<h4 style="margin-top:20px;">
+<h4 style="margin-top:15px;">
 ¿Qué pasa para mañana?
 </h4>
 
 <div id="manana"></div>
 
-<label style="margin-top:20px;">
+<label style="margin-top:15px;">
 Tarea más importante de mañana
-<input type="text"
+
+<input
+type="text"
 style="width:100%;padding:10px;margin-top:5px;">
+
 </label>
 
 <button
 style="
-margin-top:30px;
+margin-top:25px;
 padding:15px;
-background:#2563eb;
-color:white;
 border:none;
 border-radius:10px;
+background:#2563eb;
+color:white;
 font-size:18px;
 ">
 Guardar día
@@ -273,18 +291,44 @@ document
 
 }
 
-const fechaHoy = document.getElementById("fechaHoy");
+document.addEventListener('DOMContentLoaded',()=>{
+
+const fechaHoy=
+document.getElementById("fechaHoy");
 
 if(fechaHoy){
-fechaHoy.value =
+fechaHoy.value=
 new Date().toISOString().split("T")[0];
 }
 
-function crearFilaCompromiso(){
+crearCompromisos();
+crearPendientes();
+crearBloques();
 
-const input=document.createElement("input");
+});
+
+function crearCompromisos(){
+
+const container=
+document.getElementById("compromisos");
+
+if(!container) return;
+
+container.innerHTML="";
+
+for(let i=0;i<3;i++){
+agregarCompromiso();
+}
+
+}
+
+function agregarCompromiso(){
+
+const input=
+document.createElement("input");
 
 input.type="text";
+
 input.placeholder="Compromiso";
 
 input.style.width="100%";
@@ -292,99 +336,266 @@ input.style.padding="10px";
 input.style.marginBottom="8px";
 
 input.addEventListener("input",()=>{
-const container=document.getElementById("compromisos");
 
-const ultimo=container.lastElementChild;
+controlarFilasCompromisos();
 
-if(
-ultimo===input &&
-input.value.trim()!==""
-){
-crearFilaCompromiso();
-}
 });
 
 document
 .getElementById("compromisos")
 .appendChild(input);
+
 }
 
-function crearFilaPendiente(){
+function controlarFilasCompromisos(){
 
-const fila=document.createElement("div");
+const container=
+document.getElementById("compromisos");
+
+const inputs=
+[...container.querySelectorAll("input")];
+
+const llenos=
+inputs.filter(x=>x.value.trim()!=="");
+
+container.innerHTML="";
+
+llenos.forEach(x=>{
+
+const nuevo=document.createElement("input");
+
+nuevo.type="text";
+nuevo.value=x.value;
+
+nuevo.placeholder="Compromiso";
+
+nuevo.style.width="100%";
+nuevo.style.padding="10px";
+nuevo.style.marginBottom="8px";
+
+nuevo.addEventListener("input",
+controlarFilasCompromisos);
+
+container.appendChild(nuevo);
+
+});
+
+const vacio=
+document.createElement("input");
+
+vacio.type="text";
+
+vacio.placeholder="Compromiso";
+
+vacio.style.width="100%";
+vacio.style.padding="10px";
+vacio.style.marginBottom="8px";
+
+vacio.addEventListener("input",
+controlarFilasCompromisos);
+
+container.appendChild(vacio);
+
+}
+
+function crearPendientes(){
+
+const container=
+document.getElementById("pendientes");
+
+if(!container) return;
+
+for(let i=0;i<3;i++){
+agregarPendiente();
+}
+
+}
+
+function agregarPendiente(){
+
+const fila=
+document.createElement("div");
+
+fila.className="pendiente";
 
 fila.style.display="flex";
 fila.style.gap="10px";
 fila.style.marginBottom="8px";
 
 fila.innerHTML=`
-<input type="checkbox">
-<input type="text"
+<input class="hacerHoy" type="checkbox">
+<input class="textoPendiente"
+type="text"
 placeholder="Pendiente"
 style="flex:1;padding:10px;">
 `;
 
-const texto=fila.querySelector("input[type='text']");
+fila
+.querySelector(".textoPendiente")
+.addEventListener("input",()=>{
 
-texto.addEventListener("input",()=>{
+controlarPendientes();
 
-const container=
-document.getElementById("pendientes");
+});
 
-if(
-container.lastElementChild===fila &&
-texto.value.trim()!==""
-){
-crearFilaPendiente();
-actualizarManana();
-}
+fila
+.querySelector(".hacerHoy")
+.addEventListener("change",()=>{
+
+actualizarBloques();
+
 });
 
 document
 .getElementById("pendientes")
 .appendChild(fila);
+
 }
 
-function crearFilaBloque(){
+function controlarPendientes(){
+
+const container=
+document.getElementById("pendientes");
+
+const filas=
+[...container.querySelectorAll(".pendiente")];
+
+const tareas=
+filas
+.map(f=>({
+texto:f.querySelector(".textoPendiente").value,
+checked:f.querySelector(".hacerHoy").checked
+}))
+.filter(x=>x.texto.trim()!=="" );
+
+container.innerHTML="";
+
+tareas.forEach(t=>{
 
 const fila=document.createElement("div");
 
-fila.style.display="grid";
+fila.className="pendiente";
 
-fila.style.gridTemplateColumns=
-"1fr 2fr";
-
+fila.style.display="flex";
 fila.style.gap="10px";
-
 fila.style.marginBottom="8px";
 
 fila.innerHTML=`
-<input type="text"
-placeholder="09:00-10:00">
-
-<input type="text"
-placeholder="Actividad">
+<input class="hacerHoy" type="checkbox"
+${t.checked ? "checked" : ""}>
+<input
+class="textoPendiente"
+type="text"
+value="${t.texto}"
+style="flex:1;padding:10px;">
 `;
 
-const actividad=
-fila.querySelectorAll("input")[1];
+fila
+.querySelector(".textoPendiente")
+.addEventListener("input",
+controlarPendientes);
 
-actividad.addEventListener("input",()=>{
+fila
+.querySelector(".hacerHoy")
+.addEventListener("change",()=>{
+actualizarBloques();
+});
+
+container.appendChild(fila);
+
+});
+
+agregarPendiente();
+
+actualizarManana();
+actualizarBloques();
+
+}
+
+function crearBloques(){
 
 const container=
 document.getElementById("bloques");
 
-if(
-container.lastElementChild===fila &&
-actividad.value.trim()!==""
-){
-crearFilaBloque();
+if(!container) return;
+
+for(let i=0;i<3;i++){
+agregarBloque();
 }
-});
+
+}
+
+function agregarBloque(){
+
+const fila=
+document.createElement("div");
+
+fila.style.display="grid";
+fila.style.gridTemplateColumns=
+"1fr 2fr";
+fila.style.gap="10px";
+fila.style.marginBottom="8px";
+
+fila.innerHTML=`
+<input type="text" placeholder="09:00-10:00">
+<select class="actividadSelect">
+<option>Seleccionar...</option>
+</select>
+`;
 
 document
 .getElementById("bloques")
 .appendChild(fila);
+
+actualizarBloques();
+
+}
+
+function actualizarBloques(){
+
+const tareasHoy=[
+
+...document
+.querySelectorAll(".pendiente")
+
+]
+
+.filter(f=>
+f.querySelector(".hacerHoy").checked
+)
+
+.map(f=>
+f.querySelector(".textoPendiente").value
+)
+
+.filter(x=>x.trim()!=="" );
+
+document
+.querySelectorAll(".actividadSelect")
+.forEach(select=>{
+
+const valorActual=
+select.value;
+
+select.innerHTML=
+"<option>Seleccionar...</option>";
+
+tareasHoy.forEach(t=>{
+
+const option=
+document.createElement("option");
+
+option.value=t;
+option.textContent=t;
+
+select.appendChild(option);
+
+});
+
+select.value=valorActual;
+
+});
+
 }
 
 function actualizarManana(){
@@ -397,12 +608,13 @@ if(!manana) return;
 manana.innerHTML="";
 
 document
-.querySelectorAll("#pendientes input[type='text']")
+.querySelectorAll(".textoPendiente")
 .forEach(input=>{
 
 if(input.value.trim()!==""){
 
-const fila=document.createElement("div");
+const fila=
+document.createElement("div");
 
 fila.style.marginBottom="8px";
 
@@ -418,22 +630,6 @@ manana.appendChild(fila);
 }
 
 });
-
-}
-
-if(document.getElementById("compromisos")){
-
-crearFilaCompromiso();
-crearFilaCompromiso();
-crearFilaCompromiso();
-
-crearFilaPendiente();
-crearFilaPendiente();
-crearFilaPendiente();
-
-crearFilaBloque();
-crearFilaBloque();
-crearFilaBloque();
 
 }
 
