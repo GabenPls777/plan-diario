@@ -537,6 +537,10 @@ fila.style.marginBottom="8px";
 fila.innerHTML=`
 <input type="text" placeholder="09:00-10:00">
 <select class="actividadSelect">
+select.addEventListener(
+"change",
+validarDuplicados
+);
 <option>Seleccionar...</option>
 </select>
 `;
@@ -590,9 +594,15 @@ select.appendChild(option);
 
 });
 
+if(
+tareasHoy.includes(valorActual)
+){
 select.value=valorActual;
+}
 
 });
+
+validarDuplicados();
 
 }
 
@@ -631,6 +641,94 @@ manana.appendChild(fila);
 
 }
 
+function validarDuplicados(){
+
+const selects =
+[
+...document.querySelectorAll(".actividadSelect")
+];
+
+selects.forEach(s=>{
+
+s.style.border="";
+
+});
+
+let contador={};
+
+selects.forEach(s=>{
+
+const valor=s.value;
+
+if(
+valor &&
+valor!=="Seleccionar..."
+){
+
+contador[valor] =
+(contador[valor] || 0) + 1;
+
+}
+
+});
+
+selects.forEach(s=>{
+
+const valor=s.value;
+
+if(
+contador[valor] > 1
+){
+
+s.style.border =
+"2px solid red";
+
+}
+
+});
+
+let mensaje =
+document.getElementById(
+"avisoDuplicados"
+);
+
+if(!mensaje){
+
+mensaje=
+document.createElement("div");
+
+mensaje.id=
+"avisoDuplicados";
+
+mensaje.style.color=
+"red";
+
+mensaje.style.fontStyle=
+"italic";
+
+mensaje.style.marginTop=
+"10px";
+
+document
+.getElementById("bloques")
+.parentNode
+.appendChild(mensaje);
+
+}
+
+const existeDuplicado =
+Object.values(contador)
+.some(x=>x>1);
+
+mensaje.innerHTML=
+existeDuplicado
+?
+"Estas actividades se seleccionaron para hacer en dos momentos del día, si es correcto dejarlo así."
+:
+"";
+
+}
+ 
 </script>
 
 </body>
